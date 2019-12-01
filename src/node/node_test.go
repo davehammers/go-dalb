@@ -12,24 +12,20 @@ var (
 
 func TestNewNode(t *testing.T) {
 	tNode = NewNode()
-	if tNode.ID == 0 {
-		t.Fatal("Invalid Node ID returned", tNode.ID)
-	}
-	t.Log("Node ID", tNode.ID)
 	n1 := NewNode()
-	if n1.ID <= tNode.ID {
-		t.Fatal("Node ID is not unique", n1.ID)
+	if n1 == tNode {
+		t.Fatal("Node ID is not unique", n1)
 	}
-	t.Log("Next Node ID", n1.ID)
 	tNode.IP = net.IPv4(192, 168, 10, 100)
 	tNode.Port = 9001
-	tNode.Weight = 20
+	tNode.MaxTransactions = 20
 }
 
 func TestNode_UpdateTime(t *testing.T) {
 	durTotal := int64(0)
 	for cnt, dur := range []int64{12, 8, 30, 15} {
 		tNode.UpdateTime(time.Duration(dur) * time.Nanosecond)
+		time.Sleep(1 * time.Millisecond)
 		if tNode.TransactionCount() != int64(cnt+1) {
 			t.Fatal("transaction count not incrementing")
 		}
@@ -47,12 +43,9 @@ func TestNode_UpdateTime(t *testing.T) {
 }
 
 func TestNode_Reset(t *testing.T) {
-	t.Logf("Before reset %#v\n", *tNode)
+	//t.Logf("Before reset %#v\n", *tNode)
 	tNode.Reset()
-	t.Logf("After reset %#v\n", *tNode)
-	if tNode.ID == 0 {
-		t.Fatal("ID field should not be zero")
-	}
+	//t.Logf("After reset %#v\n", *tNode)
 	if tNode.TransactionTime() != 0 {
 		t.Fatal("total transaction time is not zero")
 	}
