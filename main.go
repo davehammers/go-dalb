@@ -7,7 +7,7 @@ import (
 	"flag"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
-	"go-dalb/src/cors"
+	"go-dalb/cors"
 	"os"
 )
 
@@ -52,9 +52,11 @@ func mainStart() (port string, router *mux.Router) {
 	}
 
 	// get command line parameters
-	debugPtr = flag.Bool("d", false, "standalone debug development (no container)")
-	portPtr = flag.String("p", defaultPort, "HTTPS listens on this port")
-	httpPtr = flag.Bool("http", false, "Use HTTP instead of HTTPS")
+	if debugPtr == nil {
+		debugPtr = flag.Bool("d", false, "enable debug logging output")
+		portPtr = flag.String("p", defaultPort, "HTTPS listens on this port")
+		httpPtr = flag.Bool("http", false, "Use HTTP instead of HTTPS")
+	}
 	flag.Parse()
 
 	port = *portPtr
@@ -73,15 +75,16 @@ func mainStart() (port string, router *mux.Router) {
 		log.SetReportCaller(true)
 		log.SetLevel(log.DebugLevel)
 	}
-	log.Println("Server started at http://localhost:", port)
 	return
 }
 
 func main() {
 	port, router := mainStart()
 	if *httpPtr {
+		log.Debug("Server started at http://localhost:", port)
 		cors.StartCORSHandler(port, router)
 	} else {
+		log.Debug("Server started at https://localhost:", port)
 		cors.StartCORSHandlerHTTPS(port, router)
 	}
 }
