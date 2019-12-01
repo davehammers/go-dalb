@@ -5,10 +5,8 @@ package main
 
 import (
 	"flag"
-	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"go-dalb/cors"
-	"os"
 )
 
 // CONSTANTS
@@ -17,74 +15,47 @@ const (
 	DefaultControlPort = "8081"
 )
 
-// Environment variable oneDEBUG=1 sets the package DEBUG=true
-const EnvDebug = "dalbDEBUG"
-
 var (
 	// command line flags
-	debugPtr *bool
-	portPtr  *string
-	httpPtr  *bool
-	// env variables
-	DEBUG bool
+	pDebug    *bool
+	pDataPort *string
+	pCtrlPort *string
+	pHttp     *bool
 )
 
-func init() {
-	envSetup()
-}
-func envSetup() {
-	if d, ok := os.LookupEnv(EnvDebug); ok {
-		switch d {
-		case "0":
-			DEBUG = false
-		case "1":
-			DEBUG = true
-		}
-	}
-}
-
-func mainStart() (port string, router *mux.Router) {
-	// environment variables
-	defaultPort := DefaultDataPort
-	envPort, ok := os.LookupEnv("PORT")
-	if ok {
-		defaultPort = envPort
-	}
-
+func commandLineInit() {
 	// get command line parameters
-	if debugPtr == nil {
-		debugPtr = flag.Bool("d", false, "enable debug logging output")
-		portPtr = flag.String("p", defaultPort, "HTTPS listens on this port")
-		httpPtr = flag.Bool("http", false, "Use HTTP instead of HTTPS")
+	if pDebug == nil {
+		pDebug = flag.Bool("d", false, "enable debug logging output")
+		pDataPort = flag.String("data", DefaultDataPort, "HTTP listens on this port for datapath requests")
+		pCtrlPort = flag.String("ctrl", DefaultControlPort, "HTTP listens on this port for control requests")
+		pHttp = flag.Bool("http", false, "Use HTTP instead of HTTPS")
 	}
 	flag.Parse()
-
-	port = *portPtr
-
-	if *debugPtr {
-		log.SetLevel(log.DebugLevel)
-	}
-
-	// some parts of GCP want the applications prefix while others don't
-	// register both GCP and standalone versions of the URL
-	// save setting
-	router = mux.NewRouter().StrictSlash(false)
-	//router = AddRoutes(router)
-
-	if DEBUG {
-		log.SetReportCaller(true)
-		log.SetLevel(log.DebugLevel)
-	}
-	return
 }
 
 func main() {
-	port, router := mainStart()
-	if *httpPtr {
-		log.Debug("Server started at http://localhost:", port)
-		cors.StartCORSHandler(port, router)
+	commandLineInit()
+	// start the control HTTP server
+	go func() {
+		router := ctrlPathInit()
+		if *pHttp {
+			log.Debug("Server started at http://localhost:", *pCtrlPort)
+			cors.StartCORSHandler(*pCtrlPort, router)
+		} else {
+			log.Debug("Server started at https://localhost:", *pCtrlPort)
+			cors.StartCORSHandlerHTTPS(*pCtrlPort, router)
+		}
+	}()
+
+	//start data path server
+	proxy := dataPathInit()
+	if *pHttp {
+		log.Debug("Server started at http://localhost:", *pDataPort)
+		cors.StartCORSHandler(*pDataPort, proxy.router)
 	} else {
-		log.Debug("Server started at https://localhost:", port)
-		cors.StartCORSHandlerHTTPS(port, router)
+		log.Debug("Server started at https://localhost:", *pDataPort)
+		cors.StartCORSHandlerHTTPS(*pDataPort, proxy.router)
 	}
+
 }
