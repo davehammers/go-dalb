@@ -21,6 +21,7 @@ var (
 	pDataPort *string
 	pCtrlPort *string
 	pHttp     *bool
+	proxy     *dataPathProxy
 )
 
 func commandLineInit() {
@@ -49,7 +50,7 @@ func main() {
 	}()
 
 	//start data path server
-	proxy := dataPathInit()
+	proxy = dataPathInit("/{path:.*}")
 	if *pHttp {
 		log.Debug("Server started at http://localhost:", *pDataPort)
 		cors.StartCORSHandler(*pDataPort, proxy.router)

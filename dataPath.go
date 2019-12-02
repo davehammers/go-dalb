@@ -1,3 +1,6 @@
+/*
+Copyright (c) 2019 Dave Hammers
+*/
 package main
 
 import (
@@ -11,14 +14,17 @@ import (
 )
 
 type dataPathProxy struct {
+	path   string
 	proxy  *httputil.ReverseProxy
 	sched  *node.Scheduler
 	router *mux.Router
 }
 
-func dataPathInit() *dataPathProxy {
+func dataPathInit(path string) *dataPathProxy {
 	//create a reverse proxy that distributes the requests to the worker nodes
-	dpProxy := &dataPathProxy{}
+	dpProxy := &dataPathProxy{
+		path: path,
+	}
 	dpProxy.proxy = &httputil.ReverseProxy{Director: dpProxy.dataPathDirector}
 	//allocate a load balancer scheduler for the data path
 	dpProxy.sched = node.NewScheduler(0)
@@ -26,7 +32,7 @@ func dataPathInit() *dataPathProxy {
 	//TODO
 
 	dpProxy.router = mux.NewRouter().StrictSlash(false)
-	dpProxy.router.HandleFunc("/{path:.*}", dpProxy.dataPathForward)
+	dpProxy.router.HandleFunc(path, dpProxy.dataPathForward)
 	return dpProxy
 }
 

@@ -1,3 +1,6 @@
+/*
+Copyright (c) 2019 Dave Hammers
+*/
 package main
 
 import (
@@ -18,7 +21,7 @@ import (
 // reports the results
 func TestIntegration(t *testing.T) {
 	//initialize the data path server
-	proxy := dataPathInit()
+	proxy := dataPathInit("/")
 	// create 10 worker nodes
 	ipList, err := net.LookupIP("localhost")
 	if err != nil {
@@ -52,7 +55,7 @@ func TestIntegration(t *testing.T) {
 	t.Log("Max transaction time", max)
 	for n := range proxy.sched.SchedNodeMap {
 		t.Log("======================================")
-		t.Log("Node:",n.IP.String(),":",n.Port)
+		t.Log("Node:", n.IP.String(), ":", n.Port)
 		t.Log("Number of transactions", n.TransactionCount())
 		t.Log("Average transaction time", n.AverageTransactionTime())
 		min, max := n.TransactionTimeRange()

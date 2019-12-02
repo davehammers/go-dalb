@@ -1,3 +1,6 @@
+/*
+Copyright (c) 2019 Dave Hammers
+*/
 package cors
 
 // Copyright (c) 2019 by Extreme Networks Inc.
