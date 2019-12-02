@@ -35,7 +35,7 @@ func TestIntegration(t *testing.T) {
 		n := node.NewNode()
 		n.IP = ipList[0]
 		n.Port = port
-		n.MaxTransactions = 10
+		n.MaxTransactions = port - 8999
 		proxy.sched.SchedAddNode(n)
 	}
 
@@ -44,18 +44,21 @@ func TestIntegration(t *testing.T) {
 	r := httptest.NewRequest("GET", "http://localhost/", nil)
 	w := httptest.NewRecorder()
 	tStart := time.Now()
-	for cnt := 0; cnt < 10000; cnt++ {
+	for cnt := 0; cnt < 15000; cnt++ {
 		proxy.router.ServeHTTP(w, r)
 	}
+	t.Log("\nScheduler")
 	t.Log("Elapse time", time.Since(tStart))
 	t.Log("Number of transactions", proxy.sched.TransactionCount())
 	t.Log("Average transaction time", proxy.sched.AverageTransactionTime())
 	min, max := proxy.sched.TransactionTimeRange()
 	t.Log("Min transaction time", min)
 	t.Log("Max transaction time", max)
+	t.Log("\nWorker Nodes")
 	for n := range proxy.sched.SchedNodeMap {
 		t.Log("======================================")
 		t.Log("Node:", n.IP.String(), ":", n.Port)
+		t.Log("MaxTransactions",n.MaxTransactions)
 		t.Log("Number of transactions", n.TransactionCount())
 		t.Log("Average transaction time", n.AverageTransactionTime())
 		min, max := n.TransactionTimeRange()
