@@ -13,6 +13,8 @@ By using a calendar WRR, the system behavior is deterministic inbetween rebalanc
 
 (TODO) add system and worker node performance history tracking.
 
+![](./dalbFlow.png)
+
 ## Build
 Go version go1.13.4 was used to build this application.
 
