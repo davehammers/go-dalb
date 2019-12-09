@@ -58,7 +58,7 @@ func TestIntegration(t *testing.T) {
 	for n := range proxy.sched.SchedNodeMap {
 		t.Log("======================================")
 		t.Log("Node:", n.IP.String(), ":", n.Port)
-		t.Log("MaxTransactions",n.MaxTransactions)
+		t.Log("MaxTransactions", n.MaxTransactions)
 		t.Log("Number of transactions", n.TransactionCount())
 		t.Log("Average transaction time", n.AverageTransactionTime())
 		min, max := n.TransactionTimeRange()
