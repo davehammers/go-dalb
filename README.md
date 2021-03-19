@@ -21,17 +21,17 @@ Go version go1.13.4 was used to build this application.
 To build dalb/internal, enter:
 
 ```sh
-make
+make install
 ```
 on the command line. The system will build and test each component.
 
 The resulting binary is:
 
 ```sh
-dalb/internal
+bin/dalb
 ```
 ## Running
-dalb/internal creates 2 HTTP servers, each listening on different ports.
+bin/dalb creates 2 HTTP servers, each listening on different ports.
 
 - data path - default port is 8080
 - control path - default port is 8081
