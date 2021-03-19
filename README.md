@@ -1,4 +1,4 @@
-# jdalb/internal
+# go-dalb
 ## Go Dynamic Application Load Balancer
 
 This Application Load Balancer accepts incomming HTTP requests and distributes them to worker nodes.
@@ -21,7 +21,7 @@ THe code layout follows https://github.com/golang-standards/project-layout
 ## Build
 Go version go1.15 was used to build this application.
 
-To build dalb/internal, enter:
+To build dalb, enter:
 
 ```sh
 make install
@@ -39,10 +39,10 @@ bin/dalb creates 2 HTTP servers, each listening on different ports.
 - data path - default port is 8080
 - control path - default port is 8081
 
-The different ports enable dalb/internal management to be separate from the data forwarding path. The URL's used to manage go-dalb do not conflict with any URL that may occur in the load balancing path.
+The different ports enable dalb management to be separate from the data forwarding path. The URL's used to manage go-dalb do not conflict with any URL that may occur in the load balancing path.
 
 ### Control path URL's
-The following URL's are available to gather statistics and add worker nodes to dalb/internal
+The following URL's are available to gather statistics and add worker nodes to dalb:
 
 GET		/scheduler	returns global scheduler statistics
 
@@ -138,5 +138,5 @@ go test -v -run TestIntegration
     xintegrate_test.go:65: Min transaction time 44.983µs
     xintegrate_test.go:66: Max transaction time 542.438µs
 PASS
-ok      dalb/internal 1.021s
+ok      dalb 1.021s
 ```
