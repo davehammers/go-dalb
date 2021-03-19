@@ -1,4 +1,4 @@
-# go-dalb
+# dalb/internal
 ## Go Dynamic Application Load Balancer
 
 This Application Load Balancer accepts incomming HTTP requests and distributes them to worker nodes.
@@ -7,7 +7,7 @@ Each worker node has an IP address, port and the maximum number of outstanding t
 
 The rebalancer(TBD) runs periodically and examines the performance of each worker node. The lower performing worker nodes will be given less data traffic while the better performing worker nodes will get an increase.
 
-The scheduling algorithm uses a Weighted Round Robin calendar to avoid the computational overhead for determining the next available worker node using mathmatical formula.
+The Scheduling algorithm uses a Weighted Round Robin calendar to avoid the computational overhead for determining the next available worker node using mathmatical formula.
 
 By using a calendar WRR, the system behavior is deterministic inbetween rebalance events.
 
@@ -18,7 +18,7 @@ By using a calendar WRR, the system behavior is deterministic inbetween rebalanc
 ## Build
 Go version go1.13.4 was used to build this application.
 
-To build go-dalb, enter:
+To build dalb/internal, enter:
 
 ```sh
 make
@@ -28,18 +28,18 @@ on the command line. The system will build and test each component.
 The resulting binary is:
 
 ```sh
-go-dalb
+dalb/internal
 ```
 ## Running
-go-dalb creates 2 HTTP servers, each listening on different ports.
+dalb/internal creates 2 HTTP servers, each listening on different ports.
 
 - data path - default port is 8080
 - control path - default port is 8081
 
-The different ports enable go-dalb management to be separate from the data forwarding path. The URL's used to manage go-dalb do not conflict with any URL that may occur in the load balancing path.
+The different ports enable dalb/internal management to be separate from the data forwarding path. The URL's used to manage go-dalb do not conflict with any URL that may occur in the load balancing path.
 
 ### Control path URL's
-The following URL's are available to gather statistics and add worker nodes to go-dalb
+The following URL's are available to gather statistics and add worker nodes to dalb/internal
 
 GET		/scheduler	returns global scheduler statistics
 
@@ -56,7 +56,7 @@ go test -v -run TestIntegration
 === RUN   TestIntegration
 --- PASS: TestIntegration (1.01s)
     xintegrate_test.go:50: 
-        Scheduler
+        scheduler
     xintegrate_test.go:51: Elapse time 1.004888668s
     xintegrate_test.go:52: Number of transactions 15000
     xintegrate_test.go:53: Average transaction time 60.027µs
@@ -135,5 +135,5 @@ go test -v -run TestIntegration
     xintegrate_test.go:65: Min transaction time 44.983µs
     xintegrate_test.go:66: Max transaction time 542.438µs
 PASS
-ok      go-dalb 1.021s
+ok      dalb/internal 1.021s
 ```
