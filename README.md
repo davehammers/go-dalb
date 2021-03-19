@@ -1,4 +1,4 @@
-# dalb/internal
+# jdalb/internal
 ## Go Dynamic Application Load Balancer
 
 This Application Load Balancer accepts incomming HTTP requests and distributes them to worker nodes.
@@ -13,10 +13,13 @@ By using a calendar WRR, the system behavior is deterministic inbetween rebalanc
 
 (TODO) add system and worker node performance history tracking.
 
-![](./dalbFlow.png)
+![](./images/dalbFlow.png)
+
+## Code Layout
+THe code layout follows https://github.com/golang-standards/project-layout
 
 ## Build
-Go version go1.13.4 was used to build this application.
+Go version go1.15 was used to build this application.
 
 To build dalb/internal, enter:
 
